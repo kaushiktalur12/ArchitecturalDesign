@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>GenArch AI – Reports</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/reports.css') }}"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-logo">
+        <svg viewBox="0 0 40 40" fill="none" width="36">
+          <rect width="40" height="40" rx="10" fill="url(#rlg)" />
+          <path
+            d="M8 28 L20 12 L32 28 Z"
+            stroke="white"
+            stroke-width="2"
+            fill="none"
+          />
+          <rect
+            x="15"
+            y="20"
+            width="10"
+            height="8"
+            stroke="white"
+            stroke-width="1.5"
+            fill="none"
+          />
+          <defs>
+            <linearGradient id="rlg" x1="0" y1="0" x2="40" y2="40">
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>GenArch AI</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/project">Start Project</a></li>
+        <li><a href="/designs">Designs</a></li>
+        <li><a href="/reports" class="active">Reports</a></li>
+        <li><a href="/logout" class="logout-link">Logout</a></li>
+      </ul>
+    </nav>
+
+    <div class="reports-wrap">
+      <div class="rpt-top">
+        <div>
+          <div class="rpt-badge">+ ACTIVITY DASHBOARD</div>
+          <h1 class="rpt-title">
+            Design <span class="grad-purple">Reports</span>
+          </h1>
+        </div>
+        <div class="rpt-actions">
+          <a href="/project" class="btn-new-proj">+ New Design</a>
+          <button class="btn-export" onclick="exportPDF()">⬇ Export PDF</button>
+        </div>
+      </div>
+
+      <!-- ── Summary Stats ── -->
+      <div class="summary-grid">
+        <div class="sum-card sum-card--total">
+          <div class="sum-card-inner">
+            <div class="sum-icon-wrap sum-icon-wrap--total">
+              <span class="sum-icon">📁</span>
+            </div>
+            <div class="sum-text">
+              <span class="sum-num" id="s-total">0</span>
+              <span class="sum-lbl">TOTAL PROJECTS</span>
+            </div>
+          </div>
+          <div class="sum-bar sum-bar--total"></div>
+        </div>
+
+        <div class="sum-card sum-card--res">
+          <div class="sum-card-inner">
+            <div class="sum-icon-wrap sum-icon-wrap--res">
+              <span class="sum-icon">🏠</span>
+            </div>
+            <div class="sum-text">
+              <span class="sum-num cyan" id="s-res">0</span>
+              <span class="sum-lbl">RESIDENTIAL</span>
+            </div>
+          </div>
+          <div class="sum-bar sum-bar--res"></div>
+        </div>
+
+        <div class="sum-card sum-card--com">
+          <div class="sum-card-inner">
+            <div class="sum-icon-wrap sum-icon-wrap--com">
+              <span class="sum-icon">🏢</span>
+            </div>
+            <div class="sum-text">
+              <span class="sum-num orange" id="s-com">0</span>
+              <span class="sum-lbl">COMMERCIAL</span>
+            </div>
+          </div>
+          <div class="sum-bar sum-bar--com"></div>
+        </div>
+
+        <div class="sum-card sum-card--avg">
+          <div class="sum-card-inner">
+            <div class="sum-icon-wrap sum-icon-wrap--avg">
+              <span class="sum-icon">📐</span>
+            </div>
+            <div class="sum-text">
+              <span class="sum-num red" id="s-avg">0</span>
+              <span class="sum-lbl">AVG PLOT (FT)</span>
+            </div>
+          </div>
+          <div class="sum-bar sum-bar--avg"></div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-row">
+        <span>Filter by:</span>
+        <button class="filt-btn" id="btn7" onclick="loadReports(7)">
+          📅 Last 7 Days
+        </button>
+        <button class="filt-btn active" id="btn30" onclick="loadReports(30)">
+          📋 Last 30 Days
+        </button>
+        <span id="showing-label" class="showing-lbl"></span>
+      </div>
+
+      <!-- Bar chart -->
+      <div class="chart-card" id="chart-card">
+        <h3>Projects Over Time</h3>
+        <p class="chart-sub">Design activity for the selected period</p>
+        <div class="chart-area">
+          <canvas id="bar-chart" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- Style + Type -->
+      <div class="dist-row">
+        <div class="chart-card half">
+          <h3>Design Styles</h3>
+          <canvas id="style-chart" height="200"></canvas>
+        </div>
+        <div class="chart-card half">
+          <h3>Building Types</h3>
+          <canvas id="type-chart" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Project history table -->
+      <div class="table-card">
+        <div class="table-hdr">
+          <h3>Project History <span class="badge" id="proj-count">0</span></h3>
+        </div>
+        <div class="table-wrap">
+          <table id="proj-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>DATE</th>
+                <th>PLOT SIZE</th>
+                <th>BUILDING</th>
+                <th>STYLE</th>
+                <th>FLOORS</th>
+                <th>ROOMS</th>
+                <th>AREA (SQFT)</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="proj-tbody"></tbody>
+          </table>
+          <div id="no-data" class="no-data hidden">
+            No projects found for this period.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay hidden">
+      <div class="modal-box">
+        <div class="modal-icon">🗑️</div>
+        <h3 class="modal-title">Delete Project?</h3>
+        <p class="modal-msg">
+          This action cannot be undone. The project and all its design data will
+          be permanently removed.
+        </p>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn--cancel">Cancel</button>
+          <button class="modal-btn modal-btn--confirm" id="confirm-delete-btn">
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- reports.js is the single source of truth for all delete logic -->
+    <script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+  </body>
+</html>

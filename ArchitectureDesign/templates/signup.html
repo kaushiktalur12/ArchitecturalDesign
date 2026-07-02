@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GenArch AI – Sign Up</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/auth.css') }}"
+    />
+  </head>
+  <body class="auth-body">
+    <div class="bg-blob blob1"></div>
+    <div class="bg-blob blob2"></div>
+    <div class="bg-blob blob3"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">
+          <svg
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="40" height="40" rx="10" fill="url(#lg2)" />
+            <path
+              d="M8 28 L20 12 L32 28 Z"
+              stroke="white"
+              stroke-width="2"
+              fill="none"
+            />
+            <rect
+              x="15"
+              y="20"
+              width="10"
+              height="8"
+              stroke="white"
+              stroke-width="1.5"
+              fill="none"
+            />
+            <defs>
+              <linearGradient id="lg2" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#7c3aed" />
+                <stop offset="100%" stop-color="#06b6d4" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="logo-text">GenArch AI</span>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="tab" onclick="location.href = '/login'">Login</button>
+        <button class="tab active" onclick="location.href = '/signup'">
+          Sign Up
+        </button>
+      </div>
+
+      <h2 class="auth-title">Create Account</h2>
+      <p class="auth-sub">Join the AI architectural design platform</p>
+
+      <div id="error-msg" class="error-msg hidden"></div>
+      <div id="success-msg" class="success-msg hidden"></div>
+
+      <div class="form-group">
+        <label>USERNAME (ALPHABETS ONLY)</label>
+        <input
+          id="su-username"
+          type="text"
+          placeholder="e.g. Rahul"
+          oninput="blockNumbers(this)"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>EMAIL ADDRESS</label>
+        <input id="su-email" type="email" placeholder="you@example.com" />
+      </div>
+
+      <div class="form-group">
+        <label>PASSWORD</label>
+        <div class="pw-wrap">
+          <input
+            id="su-password"
+            type="password"
+            placeholder="Min 8 chars, uppercase, number, symbol"
+            oninput="
+              checkStrength(this.value);
+              checkMatch();
+            "
+          />
+          <button
+            class="eye-btn"
+            onclick="toggleEye('su-password', 'eye2')"
+            type="button"
+          >
+            <svg
+              id="eye2"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
+        <!-- Single-line strength indicator -->
+        <div class="strength-row">
+          <div class="strength-bar">
+            <div id="sb1" class="sb"></div>
+            <div id="sb2" class="sb"></div>
+            <div id="sb3" class="sb"></div>
+            <div id="sb4" class="sb"></div>
+          </div>
+          <span id="strength-label" class="strength-label"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>CONFIRM PASSWORD</label>
+        <div class="pw-wrap">
+          <input
+            id="su-confirm"
+            type="password"
+            placeholder="Re-enter password"
+            oninput="checkMatch()"
+          />
+          <button
+            class="eye-btn"
+            onclick="toggleEye('su-confirm', 'eye3')"
+            type="button"
+          >
+            <svg
+              id="eye3"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
+        <div id="match-msg" class="match-msg"></div>
+      </div>
+
+      <button class="auth-btn" onclick="doSignup()">🚀 Create Account</button>
+
+      <p class="auth-switch">
+        Already have an account? <a href="/login">Sign In →</a>
+      </p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  </body>
+</html>

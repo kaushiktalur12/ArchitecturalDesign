@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GenArch AI – Start Project</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/project.css') }}"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <svg viewBox="0 0 40 40" fill="none" width="36">
+      <rect width="40" height="40" rx="10" fill="url(#plg)"/>
+      <path d="M8 28 L20 12 L32 28 Z" stroke="white" stroke-width="2" fill="none"/>
+      <rect x="15" y="20" width="10" height="8" stroke="white" stroke-width="1.5" fill="none"/>
+      <defs>
+        <linearGradient id="plg" x1="0" y1="0" x2="40" y2="40">
+          <stop offset="0%" stop-color="#7c3aed"/>
+          <stop offset="100%" stop-color="#06b6d4"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <span>GenArch AI</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/home">Home</a></li>
+    <li><a href="/project" class="active">Start Project</a></li>
+    <li><a href="/designs">Designs</a></li>
+    <li><a href="/reports">Reports</a></li>
+    <li><a href="/logout" class="logout-link">Logout</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-badge">+ NEW DESIGN PROJECT</div>
+  <h1 class="page-title">Design Your <span class="grad-cyan">Space</span></h1>
+  <p class="page-sub">Enter your requirements — AI will generate optimized floor plans in seconds</p>
+
+  <!-- Steps indicator -->
+  <div class="steps-indicator">
+    <div class="si-step active">
+      <div class="si-num">1</div>
+      <span>REQUIREMENTS</span>
+    </div>
+    <div class="si-line active"></div>
+    <div class="si-step">
+      <div class="si-num">2</div>
+      <span>AI GENERATE</span>
+    </div>
+    <div class="si-line"></div>
+    <div class="si-step">
+      <div class="si-num">3</div>
+      <span>VIEW DESIGNS</span>
+    </div>
+  </div>
+
+  <div id="error-banner" class="error-banner hidden"></div>
+
+  <!-- ── Plot Dimensions ─────────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📐</div>
+      <div>
+        <div class="card-title">Plot Dimensions</div>
+        <div class="card-sub">Minimum 20×20 ft required</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>PLOT LENGTH (FT)</label>
+        <input id="plot_length" type="number" min="20" placeholder="e.g. 50" value="50"
+               oninput="updatePreview()"/>
+        <span id="len-err" class="field-err hidden">Minimum 20 ft</span>
+      </div>
+      <div class="form-group">
+        <label>PLOT WIDTH (FT)</label>
+        <input id="plot_width" type="number" min="20" placeholder="e.g. 30" value="30"
+               oninput="updatePreview()"/>
+        <span id="wid-err" class="field-err hidden">Minimum 20 ft</span>
+      </div>
+    </div>
+    <div class="plot-preview">
+      <div class="preview-box">
+        <div id="plot-rect" class="plot-rect">
+          <span id="plot-label">Plot</span>
+        </div>
+        <span class="preview-label">Proportional View</span>
+      </div>
+      <div class="preview-area">
+        <span id="area-display" class="area-num">1,500</span>
+        <span class="area-unit">Square Feet</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Room Configuration ─────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🏠</div>
+      <div>
+        <div class="card-title">Room Configuration</div>
+        <div class="card-sub">Define your space needs</div>
+      </div>
+    </div>
+    <div class="form-row three-col">
+      <div class="form-group">
+        <label>BUILDING TYPE</label>
+        <select id="building_type">
+          <option>Residential</option>
+          <option>Commercial</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>BEDROOMS</label>
+        <input id="bedrooms" type="number" min="1" max="10" value="2"/>
+      </div>
+      <div class="form-group">
+        <label>BATHROOMS</label>
+        <input id="bathrooms" type="number" min="1" max="6" value="1"/>
+      </div>
+      <div class="form-group">
+        <label>HALLS / LIVING AREAS</label>
+        <input id="halls" type="number" min="1" max="4" value="1"/>
+      </div>
+      <div class="form-group">
+        <label>KITCHENS</label>
+        <input id="kitchens" type="number" min="1" max="3" value="1"/>
+      </div>
+      <div class="form-group">
+        <label>FLOORS</label>
+        <input id="floors" type="number" min="1" max="5" value="1"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Design Preferences ─────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🎨</div>
+      <div>
+        <div class="card-title">Design Preferences</div>
+        <div class="card-sub">Style and orientation settings</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>DESIGN STYLE</label>
+        <select id="design_style">
+          <option>Modern</option>
+          <option>Traditional</option>
+          <option>Minimalist</option>
+          <option>Contemporary</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ORIENTATION</label>
+        <select id="orientation">
+          <option>East-Facing</option>
+          <option>West-Facing</option>
+          <option>North-Facing</option>
+          <option>South-Facing</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-footer">
+      <span class="ai-note">⚠ AI is simulated · Designs are for conceptual planning only</span>
+      <button class="btn-generate" onclick="generateDesign()" id="gen-btn">
+        🤖 Generate Floor Plans
+      </button>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- Loader overlay -->
+<div id="loader" class="loader-overlay hidden">
+  <div class="loader-box">
+    <div class="loader-spinner"></div>
+    <p id="loader-text">Analyzing requirements...</p>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/project.js') }}"></script>
+</body>
+</html>

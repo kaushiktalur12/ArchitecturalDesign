@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GenArch AI- Login</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/auth.css') }}"
+    />
+    <style>
+      /* ── Error / Success banners ── */
+      .error-msg {
+        background: rgba(248, 113, 113, 0.15);
+        border: 1px solid rgba(248, 113, 113, 0.4);
+        color: #f87171;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+      }
+      .success-msg {
+        background: rgba(52, 211, 153, 0.15);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        color: #34d399;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+      }
+      .hidden {
+        display: none;
+      }
+
+      /* ── Forgot link ── */
+      .forgot-link {
+        display: block;
+        text-align: right;
+        font-size: 0.8rem;
+        color: var(--cyan);
+        margin-top: -12px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .forgot-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body class="auth-body">
+    <!-- Animated blobs -->
+    <div class="bg-blob blob1"></div>
+    <div class="bg-blob blob2"></div>
+    <div class="bg-blob blob3"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- ══════════════ LOGIN CARD ══════════════ -->
+    <div class="auth-card">
+      <!-- Logo -->
+      <div class="auth-logo">
+        <div class="logo-icon">
+          <svg
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="40" height="40" rx="10" fill="url(#lg1)" />
+            <path
+              d="M8 28 L20 12 L32 28 Z"
+              stroke="white"
+              stroke-width="2"
+              fill="none"
+            />
+            <rect
+              x="15"
+              y="20"
+              width="10"
+              height="8"
+              stroke="white"
+              stroke-width="1.5"
+              fill="none"
+            />
+            <defs>
+              <linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#7c3aed" />
+                <stop offset="100%" stop-color="#06b6d4" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="logo-text">GenArch AI</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="tab active" onclick="location.href = '/login'">
+          Login
+        </button>
+        <button class="tab" onclick="location.href = '/signup'">Sign Up</button>
+      </div>
+
+      <div id="error-msg" class="error-msg hidden"></div>
+      <div id="success-msg" class="success-msg hidden"></div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label>EMAIL</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Password + eye -->
+      <div class="form-group">
+        <label>PASSWORD</label>
+        <div class="pw-wrap">
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+          />
+          <button
+            class="eye-btn"
+            onclick="toggleEye('password', 'eye1')"
+            type="button"
+          >
+            <svg
+              id="eye1"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ✅ Forgot Password link — opens new page -->
+      <a class="forgot-link" href="/forgot-password">Forgot password?</a>
+
+      <button class="auth-btn" onclick="doLogin()">Login →</button>
+
+      <p class="auth-switch">
+        New user? <a href="/signup">Create an account</a>
+      </p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script>
+      /* ── Override doLogin to use email ── */
+      async function doLogin() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        const showErr = (msg) => {
+          const el = document.getElementById("error-msg");
+          el.textContent = msg;
+          el.classList.remove("hidden");
+          setTimeout(() => el.classList.add("hidden"), 4000);
+        };
+
+        if (!email || !password) {
+          showErr("Please fill in all fields");
+          return;
+        }
+
+        try {
+          const res = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await res.json();
+          if (data.ok) {
+            window.location.href = "/home";
+          } else {
+            showErr(data.msg || "Login failed");
+          }
+        } catch {
+          showErr("Network error. Please try again.");
+        }
+      }
+
+      /* ── Enter key ── */
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doLogin();
+      });
+    </script>
+  </body>
+</html>

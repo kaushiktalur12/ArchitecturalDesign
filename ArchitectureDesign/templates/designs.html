@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>GenArch AI – Designs</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/designs.css') }}"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-logo">
+        <svg viewBox="0 0 40 40" fill="none" width="36">
+          <rect width="40" height="40" rx="10" fill="url(#dlg)" />
+          <path
+            d="M8 28 L20 12 L32 28 Z"
+            stroke="white"
+            stroke-width="2"
+            fill="none"
+          />
+          <rect
+            x="15"
+            y="20"
+            width="10"
+            height="8"
+            stroke="white"
+            stroke-width="1.5"
+            fill="none"
+          />
+          <defs>
+            <linearGradient id="dlg" x1="0" y1="0" x2="40" y2="40">
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>GenArch AI</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/project">Start Project</a></li>
+        <li><a href="/designs" class="active">Designs</a></li>
+        <li><a href="/reports">Reports</a></li>
+        <li><a href="/logout" class="logout-link">Logout</a></li>
+        <li><a href="/project" class="btn-new">+ New Design</a></li>
+      </ul>
+    </nav>
+
+    <div class="meta-bar">
+      <div class="meta-item">
+        <span class="meta-label">PLOT SIZE</span
+        ><span class="meta-val"
+          >{{ project.plot_length }}×{{ project.plot_width }} ft</span
+        >
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">TOTAL AREA</span
+        ><span class="meta-val">{{ design_data.total_area|int }} sqft</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">BUILDING</span
+        ><span class="meta-val">{{ project.building_type }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">STYLE</span
+        ><span class="meta-val">{{ project.design_style }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">ORIENTATION</span
+        ><span class="meta-val">{{ project.orientation }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">FLOORS</span
+        ><span class="meta-val">{{ project.floors }}</span>
+      </div>
+    </div>
+
+    <div class="designs-wrap">
+      <div class="var-tabs">
+        <button class="var-tab active" onclick="switchVar(0)">
+          <span>Variation 1: {{ design_data.variations[0].name }}</span>
+          <span class="eff-badge"
+            >⚡ {{ design_data.variations[0].efficiency }}% efficiency</span
+          >
+        </button>
+        <button class="var-tab" onclick="switchVar(1)">
+          <span>Variation 2: {{ design_data.variations[1].name }}</span>
+          <span class="eff-badge"
+            >⚡ {{ design_data.variations[1].efficiency }}% efficiency</span
+          >
+        </button>
+      </div>
+
+      <script id="design-data-json" type="application/json">
+        {{ design_data | tojson }}
+      </script>
+      <script id="project-data-json" type="application/json">
+        {{ project | tojson }}
+      </script>
+
+      {% for v in design_data.variations %}
+      <div
+        class="var-panel {% if loop.first %}active{% endif %}"
+        id="panel-{{ loop.index0 }}"
+      >
+        <div class="var-header">
+          <div>
+            <h2 class="var-name">{{ v.name }}</h2>
+            <p class="var-desc">{{ v.desc }}</p>
+          </div>
+        </div>
+
+        <div class="design-grid">
+          <!-- ─── LEFT: Floor Plan Card ──────────────────────────────── -->
+          <div class="floor-card">
+            <div class="floor-header">
+              <span class="dot-cyan"></span> Floor Plan
+              <div class="view-toggle">
+                <button
+                  class="vt active"
+                  data-vi="{{ loop.index0 }}"
+                  data-view="2d"
+                >
+                  2D
+                </button>
+                <button class="vt" data-vi="{{ loop.index0 }}" data-view="3d">
+                  3D
+                </button>
+              </div>
+            </div>
+
+            <div class="floor-pill-bar" id="fsel-{{ loop.index0 }}"></div>
+
+            <div id="view2d-{{ loop.index0 }}" class="canvas-wrap">
+              <canvas
+                id="canvas2d-{{ loop.index0 }}"
+                width="500"
+                height="380"
+              ></canvas>
+              <p class="compass-note">
+                ↗ Compass (top-right) · {{ project.orientation }}
+              </p>
+            </div>
+            <div id="view3d-{{ loop.index0 }}" class="canvas-wrap hidden">
+              <canvas
+                id="canvas3d-{{ loop.index0 }}"
+                width="500"
+                height="380"
+              ></canvas>
+              <p class="hint3d">Click &amp; drag to rotate · Scroll to zoom</p>
+            </div>
+
+            <!-- AI Design Summary -->
+            <div class="ai-inline-summary">
+              <h4>🤖 AI Design Summary</h4>
+              <p>{{ v.ai_summary }}</p>
+            </div>
+
+            <!-- Vastu Shastra (below AI summary, in floor card) -->
+            <div class="vastu-card">
+              <div class="vastu-card-hdr">🏛️ Vastu Shastra Recommendations</div>
+              <ul class="vastu-list">
+                {% for tip in design_data.vastu_tips %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <!-- /floor-card -->
+
+          <!-- ─── RIGHT: Analysis Card ───────────────────────────────── -->
+          <div class="analysis-card">
+            <div class="analysis-header">
+              <span class="dot-purple"></span> Space Analysis
+            </div>
+
+            <!-- Stats -->
+            <div class="stat-row">
+              <div class="a-stat">
+                <span class="a-num">{{ design_data.total_area|int }}</span>
+                <span class="a-lbl">TOTAL SQFT</span>
+              </div>
+              <div class="a-stat">
+                <span
+                  class="a-num {% if v.efficiency >= 75 %}eff-high{% elif v.efficiency >= 60 %}eff-mid{% else %}eff-low{% endif %}"
+                >
+                  {{ v.efficiency }}%
+                </span>
+                <span class="a-lbl">EFFICIENCY</span>
+              </div>
+              <div class="a-stat">
+                <span class="a-num orange">{{ v.rooms|length }}</span>
+                <span class="a-lbl">ROOMS</span>
+              </div>
+            </div>
+
+            <!-- Room list -->
+            <div class="room-list-header">Room Specifications</div>
+            <div class="room-list" id="rooms-{{ loop.index0 }}">
+              {% for r in v.rooms %}
+              <div class="room-item">
+                <span class="room-dot" data-color="{{ r.color }}"></span>
+                <span class="room-name">{{ r.name }}</span>
+                <span class="room-sqft">{{ r.sqft }} sqft</span>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Auto-Added Spaces -->
+            {% if v.extra_rooms %}
+            <div class="extra-rooms-card">
+              <div class="extra-rooms-hdr">ℹ️ Auto-Added Spaces</div>
+              <p class="extra-rooms-note">
+                The following spaces were automatically added beyond your
+                specified requirements to ensure functional completeness:
+              </p>
+              <div class="extra-tags">
+                {% for ex in v.extra_rooms %}
+                <span class="extra-tag">{{ ex }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Cost Estimation -->
+            <div class="cost-card">
+              <div class="cost-card-hdr">💰 Construction Cost Estimate</div>
+              <div class="cost-range">
+                <span class="cost-low">{{ v.cost.low_fmt }}</span>
+                <span class="cost-dash">—</span>
+                <span class="cost-high">{{ v.cost.high_fmt }}</span>
+              </div>
+              <div class="cost-meta">
+                Rate:
+                <span>₹{{ "{:,}".format(v.cost.rate_per_sqft) }}/sqft</span>
+                &nbsp;·&nbsp; Built-up: <span>{{ v.cost.area }} sqft</span>
+                &nbsp;·&nbsp; {{ project.floors }} floor(s)
+              </div>
+              <span class="cost-badge">
+                {% if loop.first %}Compact Build · Standard Finish{% else
+                %}Luxury Build · Premium Finish{% endif %}
+              </span>
+              <p class="cost-disclaimer">
+                * Civil + finishing work only. Excludes land cost, interiors,
+                landscaping &amp; govt fees.
+              </p>
+            </div>
+          </div>
+          <!-- /analysis-card -->
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <script src="{{ url_for('static', filename='js/designs.js') }}"></script>
+  </body>
+</html>

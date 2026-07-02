@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GenArch AI – Home</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home.css') }}"
+    />
+  </head>
+  <body>
+    <!-- ── NAVBAR ─────────────────────────────────────────────────────────── -->
+    <nav class="navbar">
+      <div class="nav-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none">
+            <rect width="40" height="40" rx="10" fill="url(#nlg)" />
+            <path
+              d="M8 28 L20 12 L32 28 Z"
+              stroke="white"
+              stroke-width="2"
+              fill="none"
+            />
+            <rect
+              x="15"
+              y="20"
+              width="10"
+              height="8"
+              stroke="white"
+              stroke-width="1.5"
+              fill="none"
+            />
+            <defs>
+              <linearGradient id="nlg" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#7c3aed" />
+                <stop offset="100%" stop-color="#06b6d4" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span>GenArch AI</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/home" class="active">Home</a></li>
+        <li><a href="/project">Start Project</a></li>
+        <li><a href="/designs">Designs</a></li>
+        <li><a href="/reports">Reports</a></li>
+        <li><a href="/logout" class="logout-link">Logout</a></li>
+        <li><a href="/project" class="btn-new">+ New Design</a></li>
+      </ul>
+      <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+    </nav>
+
+    <!-- ── HERO ───────────────────────────────────────────────────────────── -->
+    <section class="hero">
+      <!-- Parallax bg images -->
+      <div class="hero-bg">
+        <img
+          src="{{ url_for('static', filename='images/bg1.svg') }}"
+          class="bg-img active"
+          style="opacity: 1"
+        />
+        <img
+          src="{{ url_for('static', filename='images/bg2.svg') }}"
+          class="bg-img"
+        />
+        <img
+          src="{{ url_for('static', filename='images/bg3.svg') }}"
+          class="bg-img"
+        />
+        <img
+          src="{{ url_for('static', filename='images/bg4.svg') }}"
+          class="bg-img"
+        />
+        <img
+          src="{{ url_for('static', filename='images/bg5.svg') }}"
+          class="bg-img"
+        />
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="bg-blob h-blob1"></div>
+      <div class="bg-blob h-blob2"></div>
+
+      <div class="hero-content" data-aos="fade-up">
+        <div class="hero-badge">✦ AI-POWERED ARCHITECTURE</div>
+        <h1 class="hero-title">
+          Redefining<br />
+          <span class="gradient-word" id="animated-word">Spaces</span><br />
+          with AI
+        </h1>
+        <p class="hero-desc">
+          Generate optimized architectural floor plans, 3D visualizations, and
+          multiple design variations instantly — powered by intelligent
+          algorithms.
+        </p>
+        <div class="hero-btns">
+          <a href="/project" class="btn-primary">🚀 Start Designing</a>
+          <a href="/designs" class="btn-outline">View Designs</a>
+        </div>
+      </div>
+
+      <div class="scroll-indicator">
+        <div class="scroll-dot"></div>
+      </div>
+    </section>
+
+    <!-- ── FEATURES ───────────────────────────────────────────────────────── -->
+    <section class="features-section">
+      <div class="section-badge">FEATURES</div>
+      <h2 class="section-title">
+        Everything you need to <span class="grad">design smarter</span>
+      </h2>
+      <p class="section-sub">
+        From plot dimensions to finished floor plans — our AI handles the heavy
+        lifting.
+      </p>
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-icon">🤖</div>
+          <h3>AI Floor Plan Generation</h3>
+          <p>
+            Intelligent rule-based algorithms create optimized 2D layouts based
+            on your plot dimensions, rooms, and style preferences.
+          </p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🏗️</div>
+          <h3>3D Visualization</h3>
+          <p>
+            Interactive Three.js models bring your floor plan to life with full
+            360° rotation and zoom capabilities.
+          </p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🎨</div>
+          <h3>2 Design Variations</h3>
+          <p>
+            Get Compact Efficient and Luxury Spacious layout alternatives — each
+            optimized differently for your space.
+          </p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📊</div>
+          <h3>Space Distribution Reports</h3>
+          <p>
+            Detailed analytics showing room-by-room space allocation, efficiency
+            scores, and distribution percentages.
+          </p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📄</div>
+          <h3>PDF Export</h3>
+          <p>
+            Download your selected design as a professional PDF report with full
+            layout details and specifications.
+          </p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📱</div>
+          <h3>Responsive Design</h3>
+          <p>
+            Works beautifully across desktop, tablet, and mobile devices with a
+            fully adaptive interface.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HOW IT WORKS ───────────────────────────────────────────────────── -->
+    <section class="how-section">
+      <h2 class="section-title">
+        How It <span class="grad-orange">Works</span>
+      </h2>
+      <p class="section-sub">Four simple steps from idea to design</p>
+      <div class="steps-row">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Input Requirements</h4>
+          <p>Enter plot size, building type, rooms, and design preferences</p>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>AI Processing</h4>
+          <p>
+            Our algorithm analyzes your inputs and generates optimized layouts
+          </p>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>View Variations</h4>
+          <p>Get 2 different design options in both 2D and 3D views</p>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h4>Export &amp; Save</h4>
+          <p>Download your chosen design as PDF and track history in Reports</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA ────────────────────────────────────────────────────────────── -->
+    <section class="cta-section">
+      <h2>Ready to design your space?</h2>
+      <p>
+        Welcome back, <strong>{{ username }}</strong>! Start a project and let
+        AI do the design work.
+      </p>
+      <a href="/project" class="btn-primary">🏠 Start New Project</a>
+    </section>
+
+    <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+    <footer class="footer">
+      <p>© 2026 GenArch AI · Built for architectural innovation</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+  </body>
+</html>
